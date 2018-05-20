@@ -1,6 +1,6 @@
 .clock-container {
   min-height: 100vh;
-  padding: 5%;
+  padding: 4%;
 }
 
 .clock-container header {
@@ -16,7 +16,7 @@
 .settings {
   display: flex;
   justify-content: space-evenly;
-  margin: 3em;
+  margin: 2.5em 3em 0.5em 3em;
 }
 
 
