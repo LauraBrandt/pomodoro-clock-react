@@ -13,6 +13,8 @@ it('contains the correct child components', () => {
   const wrapper = shallow(<ClockContainer />);
   expect(wrapper.find(TimeSetting)).toHaveLength(2);
   expect(wrapper.find(TimeDisplay)).toHaveLength(1);
+  expect(wrapper.find('header')).toHaveLength(1);
+  expect(wrapper.find('footer')).toHaveLength(1);
 });
 
 it('passes the correct initial props to TimeSetting components', () => {

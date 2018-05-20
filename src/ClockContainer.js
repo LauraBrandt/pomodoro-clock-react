@@ -15,6 +15,7 @@ class ClockContainer extends React.Component {
           <TimeSetting type="Break" length={5} />
         </div>
         <TimeDisplay time="25:00" type="Session"/>
+        <footer>Designed and coded by <a href="https://github.com/LauraBrandt">Laura Brandt</a></footer>
       </div>
     );
   }
