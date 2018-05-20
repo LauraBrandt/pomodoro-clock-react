@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow, mount} from 'enzyme';
 import renderer from 'react-test-renderer';
-import TimeSetting from '../Components/TimeSetting';
+import TimeSetting from './TimeSetting';
 
 it('renders without crashing', () => {
   shallow(<TimeSetting />);

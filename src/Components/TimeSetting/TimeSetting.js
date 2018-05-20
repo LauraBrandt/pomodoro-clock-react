@@ -1,10 +1,11 @@
 import React from 'react';
+import './TimeSetting.css';
 
 const TimeSetting = ({type, length}) => {
   return(
-    <div>
+    <div className="time-setting">
       <label htmlFor={`${type && type.toLowerCase()}-length`} id={`${type && type.toLowerCase()}-label`}>{type} Length</label>
-      <div>
+      <div className="length-controls">
         <button id={`${type && type.toLowerCase()}-decrement`}><i className="fas fa-minus" title="minus"></i></button>
         <input 
           id={`${type && type.toLowerCase()}-length`} 

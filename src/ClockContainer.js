@@ -1,7 +1,7 @@
 import React from 'react';
-import TimeSetting from './Components/TimeSetting';
-import TimeDisplay from './Components/TimeDisplay';
-import Controls from './Components/Controls';
+import TimeSetting from './Components/TimeSetting/TimeSetting';
+import TimeDisplay from './Components/TimeDisplay/TimeDisplay';
+import Controls from './Components/Controls/Controls';
 import './ClockContainer.css';
 
 class ClockContainer extends React.Component {

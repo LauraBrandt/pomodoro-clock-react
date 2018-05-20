@@ -13,24 +13,25 @@
   padding: 0;
 }
 
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
+.settings {
+  display: flex;
+  justify-content: space-evenly;
+  margin: 3em;
 }
 
 
 @media (max-width: 450px) {
   .clock-container {
     padding: 10% 8%;
-}
+  }
 
   .clock-container header {
     margin-bottom: 0.5em;
-}
+  }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  .settings {
+    flex-direction: column;
+    align-items: center;
+    margin: 0;
+  }
 }

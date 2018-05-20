@@ -1,0 +1,55 @@
+.time-setting label {
+  display: block;
+  text-align: center;
+  padding-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.length-controls {
+  display: flex;
+  justify-content: center;
+}
+
+.length-controls button {
+  border: none;
+  background: #222;
+  color: white;
+  font-size: 1.2rem;
+  cursor: pointer;
+  padding: 0 0.3rem;
+  margin: 0 0.4rem;
+}
+
+.length-controls input {
+  border: none;
+  width: 3rem;
+  text-align: center;
+  background: #222;
+  color: white;
+  font-size: 1.5rem;
+  padding: 0;
+  margin: 0;
+}
+
+/* Remove number spinner */
+.length-controls input[type='number']::-webkit-outer-spin-button,
+.length-controls input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.length-controls input[type='number'] {
+  -moz-appearance:textfield;
+}
+
+.length-controls input:focus,
+.length-controls button:focus{
+  outline: none;
+  background: #333;
+  border-radius: 5px;
+}
+
+@media (max-width: 450px) {
+  .time-setting {
+    margin: 0.8em 0;
+  }
+}

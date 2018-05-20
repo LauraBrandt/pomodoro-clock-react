@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow, mount} from 'enzyme';
 // import renderer from 'react-test-renderer';
-import Controls from '../Components/Controls';
+import Controls from './Controls';
 
 it('renders without crashing', () => {
   shallow(<Controls />);

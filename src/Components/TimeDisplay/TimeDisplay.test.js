@@ -1,7 +1,7 @@
 import React from 'react';
 import {shallow, mount} from 'enzyme';
-// import renderer from 'react-test-renderer';
-import TimeDisplay from '../Components/TimeDisplay';
+import renderer from 'react-test-renderer';
+import TimeDisplay from './TimeDisplay';
 
 it('renders without crashing', () => {
   shallow(<TimeDisplay />);
