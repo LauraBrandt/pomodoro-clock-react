@@ -1,0 +1,26 @@
+.controls {
+  display: flex;
+  justify-content: center;
+}
+
+.controls button {
+  color: #f0f0f0;
+  font-size: 1.5rem;
+  border: 1px solid #eee;
+  border-radius: 5px;
+  background: #252525;
+  padding: 0.3rem 0.8rem;
+  margin: 0 0.8rem 2rem 0.8rem;
+  cursor: pointer;
+}
+
+.controls button:hover,
+.controls button:focus {
+  color: white;
+  background: #333;
+  outline: none;
+}
+
+.controls button:active {
+  background: #3f3f3f;
+}
