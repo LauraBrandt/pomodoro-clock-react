@@ -48,6 +48,10 @@
   border-radius: 5px;
 }
 
+.length-controls button:active {
+  background: #3f3f3f;
+}
+
 @media (max-width: 450px) {
   .time-setting {
     margin: 0.8em 0;
