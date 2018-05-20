@@ -11,8 +11,8 @@ class ClockContainer extends React.Component {
           <h1>Pomodoro Clock</h1>
         </header>
         <div className="settings">
-          <TimeSetting type="Work" />
-          <TimeSetting type="Break" />
+          <TimeSetting type="Session" length={25} />
+          <TimeSetting type="Break" length={5} />
         </div>
         <TimeDisplay time={60}/>
       </div>

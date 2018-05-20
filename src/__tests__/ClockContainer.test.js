@@ -18,8 +18,10 @@ it('contains the correct child components', () => {
 it('passes the correct props to TimeSetting components', () => {
   const wrapper = shallow(<ClockContainer />);
   const timeSettings = wrapper.find(TimeSetting);
-  expect(timeSettings.at(0).props().type).toEqual('Work');
+  expect(timeSettings.at(0).props().type).toEqual('Session');
+  expect(timeSettings.at(0).props().length).toEqual(25);
   expect(timeSettings.at(1).props().type).toEqual('Break');
+  expect(timeSettings.at(1).props().length).toEqual(5);
 });
 
 describe('snapshot', () => {
@@ -27,5 +29,5 @@ describe('snapshot', () => {
     const component = renderer.create(<ClockContainer />);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
-  })
+  });
 });
