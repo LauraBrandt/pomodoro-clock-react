@@ -19,6 +19,16 @@
   margin: 2.5em 3em 0.5em 3em;
 }
 
+footer {
+  margin-top: 1rem;
+  text-align: center;
+}
+
+footer a {
+  color: #d19494;
+  text-decoration: none;
+}
+
 
 @media (max-width: 450px) {
   .clock-container {
