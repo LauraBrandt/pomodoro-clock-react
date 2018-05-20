@@ -15,13 +15,20 @@ it('contains the correct child components', () => {
   expect(wrapper.find(TimeDisplay)).toHaveLength(1);
 });
 
-it('passes the correct props to TimeSetting components', () => {
+it('passes the correct initial props to TimeSetting components', () => {
   const wrapper = shallow(<ClockContainer />);
   const timeSettings = wrapper.find(TimeSetting);
   expect(timeSettings.at(0).props().type).toEqual('Session');
   expect(timeSettings.at(0).props().length).toEqual(25);
   expect(timeSettings.at(1).props().type).toEqual('Break');
   expect(timeSettings.at(1).props().length).toEqual(5);
+});
+
+it('passes the correct initial props to TimeDisplay component', () => {
+  const wrapper = shallow(<ClockContainer />);
+  const timeDisplayWrapper = wrapper.find(TimeDisplay);
+  expect(timeDisplayWrapper.at(0).props().type).toEqual('Session');
+  expect(timeDisplayWrapper.at(0).props().time).toEqual("25:00");
 });
 
 describe('snapshot', () => {

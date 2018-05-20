@@ -1,9 +1,10 @@
 import React from 'react';
 
-const TimeDisplay = (props) => {
+const TimeDisplay = ({type, time}) => {
   return(
     <div>
-      {props.time}
+      <label htmlFor="time-left" id="timer-label">{type}</label>
+      <div id="time-left">{time}</div>
     </div>
   );
 }
