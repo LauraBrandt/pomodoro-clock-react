@@ -1,0 +1,31 @@
+import React from 'react';
+import {shallow} from 'enzyme';
+// import renderer from 'react-test-renderer';
+import ClockContainer from '../ClockContainer';
+import TimeSetting from '../Components/TimeSetting';
+import TimeDisplay from '../Components/TimeDisplay';
+
+it('renders without crashing', () => {
+  shallow(<ClockContainer />);
+});
+
+it('contains the correct child components', () => {
+  const wrapper = shallow(<ClockContainer />);
+  expect(wrapper.find(TimeSetting)).toHaveLength(2);
+  expect(wrapper.find(TimeDisplay)).toHaveLength(1);
+});
+
+it('passes the correct props to TimeSetting components', () => {
+  const wrapper = shallow(<ClockContainer />);
+  const timeSettings = wrapper.find(TimeSetting);
+  expect(timeSettings.at(0).props().type).toEqual('Work');
+  expect(timeSettings.at(1).props().type).toEqual('Break');
+});
+
+describe('snapshot', () => {
+  it.skip('renders', () => {
+    const component = renderer.create(<ClockContainer />);
+    let tree = component.toJSON();
+    expect(tree).toMatchSnapshot();
+  })
+});
