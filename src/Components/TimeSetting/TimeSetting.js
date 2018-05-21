@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './TimeSetting.css';
 
 const TimeSetting = ({type, length}) => {
@@ -16,6 +17,11 @@ const TimeSetting = ({type, length}) => {
       </div>
     </div>
   );
+}
+
+TimeSetting.propTypes = {
+  type: PropTypes.string.isRequired,
+  length: PropTypes.number.isRequired
 }
 
 export default TimeSetting;
