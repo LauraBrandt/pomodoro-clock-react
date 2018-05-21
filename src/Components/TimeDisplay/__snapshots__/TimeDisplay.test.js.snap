@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot renders 1`] = `
+<div
+  className="time-display"
+>
+  <div
+    className="time-display-fill"
+  />
+  <label
+    htmlFor="time-left"
+    id="timer-label"
+  >
+    Session
+  </label>
+  <div
+    id="time-left"
+  >
+    8:08
+  </div>
+</div>
+`;

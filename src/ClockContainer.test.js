@@ -32,7 +32,7 @@ it('passes the correct initial props to TimeDisplay component', () => {
   const wrapper = shallow(<ClockContainer />);
   const timeDisplayWrapper = wrapper.find(TimeDisplay);
   expect(timeDisplayWrapper.at(0).props().type).toEqual('Session');
-  expect(timeDisplayWrapper.at(0).props().time).toEqual("25:00");
+  expect(timeDisplayWrapper.at(0).props().time).toEqual(25*60);
 });
 
 describe('snapshot', () => {
