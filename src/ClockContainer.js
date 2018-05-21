@@ -11,11 +11,29 @@ class ClockContainer extends React.Component {
     this.state = {
       sessionLength: 25,
       breakLength: 5,
-      timeLeft: 25*60
+      timeLeft: 25*60,
+      isRunning: false,
     }
 
+    this.handleReset = this.handleReset.bind(this);
+    this.handleStartStop = this.handleStartStop.bind(this);
     this.handleLengthChangeByOne = this.handleLengthChangeByOne.bind(this);
     this.handleLengthChange = this.handleLengthChange.bind(this);
+  }
+
+  handleReset() {
+    this.setState({
+      sessionLength: 25,
+      breakLength: 5,
+      timeLeft: 25*60,
+      isRunning: false,
+    });
+  }
+
+  handleStartStop() {
+    this.setState(prevState => ({
+      isRunning: !prevState.isRunning
+    }));
   }
 
   handleLengthChangeByOne(type, change) {
@@ -61,8 +79,15 @@ class ClockContainer extends React.Component {
             handleChange={this.handleLengthChange}
           />
         </div>
-        <TimeDisplay time={this.state.timeLeft} type="Session"/>
-        <Controls />
+        <TimeDisplay 
+          time={this.state.timeLeft} 
+          isRunning={this.state.isRunning}
+        />
+        <Controls 
+          isRunning={this.state.isRunning} 
+          reset={this.handleReset} 
+          handleStartStop={this.handleStartStop}
+        />
         <footer>Designed and coded by <a href="https://github.com/LauraBrandt">Laura Brandt</a></footer>
       </div>
     );

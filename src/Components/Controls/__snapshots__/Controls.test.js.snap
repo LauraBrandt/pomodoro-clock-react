@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot renders 1`] = `
+<div
+  className="controls"
+>
+  <button
+    id="start_stop"
+    onClick={[Function]}
+    title="Start"
+  >
+    <i
+      className="fas fa-play"
+      title="Start"
+    />
+  </button>
+  <button
+    id="reset"
+    onClick={[Function]}
+    title="Reset"
+  >
+    <i
+      className="fas fa-sync-alt"
+      title="reset"
+    />
+  </button>
+</div>
+`;

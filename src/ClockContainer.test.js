@@ -110,6 +110,43 @@ describe('change break and session lengths', () => {
   });
 });
 
+describe('play and pause', () => {
+  it('toggles isRunning state and passes it as props', () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({isRunning: true});
+
+    wrapper.find('#start_stop').simulate('click');
+    expect(wrapper.state().isRunning).toBeFalsy();
+    expect(wrapper.find(TimeDisplay).props().isRunning).toBeFalsy();
+    expect(wrapper.find(Controls).props().isRunning).toBeFalsy();
+
+    wrapper.find('#start_stop').simulate('click');
+    expect(wrapper.state().isRunning).toBeTruthy();
+    expect(wrapper.find(TimeDisplay).props().isRunning).toBeTruthy();
+    expect(wrapper.find(Controls).props().isRunning).toBeTruthy();
+  });
+});
+
+describe('reset', () => {
+  it('resets state variables to initial state', () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({
+      sessionLength: 20,
+      breakLength: 3,
+      timeLeft: 1006,
+      isRunning: true,
+      current: 'Break'
+    });
+
+    wrapper.find('#reset').simulate('click');
+    expect(wrapper.state().sessionLength).toBe(25);
+    expect(wrapper.state().breakLength).toBe(5);
+    expect(wrapper.state().timeLeft).toBe(25*60);
+    expect(wrapper.state().isRunning).toBe(false);
+    expect(wrapper.state().current).toBe('Session');
+  });
+});
+
 describe('snapshot', () => {
   it.skip('renders', () => {
     const component = renderer.create(<ClockContainer />);
