@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot renders 1`] = `
+<div
+  className="time-setting"
+>
+  <label
+    htmlFor="session-length"
+    id="session-label"
+  >
+    Session
+     Length
+  </label>
+  <div
+    className="length-controls"
+  >
+    <button
+      id="session-decrement"
+      onClick={[Function]}
+    >
+      <i
+        className="fas fa-minus"
+        title="minus"
+      />
+    </button>
+    <input
+      id="session-length"
+      max="60"
+      min="0"
+      onBlur={[Function]}
+      onChange={[Function]}
+      type="number"
+      value={25}
+    />
+    <button
+      id="session-increment"
+      onClick={[Function]}
+    >
+      <i
+        className="fas fa-plus"
+        title="plus"
+      />
+    </button>
+  </div>
+</div>
+`;
