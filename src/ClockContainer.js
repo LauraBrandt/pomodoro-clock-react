@@ -67,6 +67,8 @@ class ClockContainer extends React.Component {
   }
 
   handleLengthChangeByOne(type, change) {
+    if (this.state.isRunning) return;
+
     const key = type.toLowerCase() + 'Length';
     let newLength = this.state[key] + change;
     
@@ -83,6 +85,8 @@ class ClockContainer extends React.Component {
   }
   
   handleLengthChange(e) {
+    if (this.state.isRunning) return;
+
     const type = e.target.id.split('-')[0];
     const key = type + 'Length';
     let newLength = Number(e.target.value);
@@ -117,12 +121,14 @@ class ClockContainer extends React.Component {
             length={this.state.sessionLength} 
             handleChangeByOne={this.handleLengthChangeByOne}
             handleChange={this.handleLengthChange}
+            isRunning={this.state.isRunning}
           />
           <TimeSetting 
             type="Break" 
             length={this.state.breakLength} 
             handleChangeByOne={this.handleLengthChangeByOne}
             handleChange={this.handleLengthChange}
+            isRunning={this.state.isRunning}
           />
         </div>
         <TimeDisplay 

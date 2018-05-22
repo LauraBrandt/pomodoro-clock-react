@@ -225,6 +225,28 @@ describe('change break and session lengths', () => {
     expect(wrapper.find(TimeDisplay).props().time).toBe(60*60);
     expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("60:00");
   }); 
+
+  it("can't increment lengths while timer is running", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({ sessionLength: 5, isRunning: true });
+    wrapper.find('#session-increment').simulate('click');
+    expect(wrapper.state().sessionLength).toBe(5);
+    expect(wrapper.find(TimeSetting).at(0).props().length).toBe(5);
+  });
+  
+  it("can't change lengths via input while timer is running", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({ sessionLength: 5, isRunning: true });
+    const event = {
+      target: {
+        id: 'session-length',
+        value: 20
+      }
+    }
+    wrapper.find('#session-length').simulate('change', event);
+    expect(wrapper.state().sessionLength).toBe(5);
+    expect(wrapper.find(TimeSetting).at(0).props().length).toBe(5);
+  });
 });
 
 describe('play and pause', () => {

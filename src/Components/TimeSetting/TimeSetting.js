@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import './TimeSetting.css';
 
-const TimeSetting = ({type, length, handleChangeByOne, handleChange}) => {
+const TimeSetting = ({type, length, handleChangeByOne, handleChange, isRunning}) => {
   return(
     <div className="time-setting">
       <label htmlFor={`${type && type.toLowerCase()}-length`} id={`${type && type.toLowerCase()}-label`}>{type} Length</label>
@@ -18,6 +18,7 @@ const TimeSetting = ({type, length, handleChangeByOne, handleChange}) => {
           onBlur={handleChange}
           min="0"
           max="60"
+          disabled={isRunning}
         />
         <button id={`${type && type.toLowerCase()}-increment`}  onClick={handleChangeByOne.bind(this, type, 1)}>
           <i className="fas fa-plus" title="plus"></i>
@@ -31,7 +32,8 @@ TimeSetting.propTypes = {
   type: PropTypes.string.isRequired,
   length: PropTypes.number.isRequired,
   handleChangeByOne: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired
+  handleChange: PropTypes.func.isRequired,
+  isRunning: PropTypes.bool.isRequired
 }
 
 export default TimeSetting;

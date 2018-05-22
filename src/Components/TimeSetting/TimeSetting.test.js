@@ -4,11 +4,11 @@ import renderer from 'react-test-renderer';
 import TimeSetting from './TimeSetting';
 
 it('renders without crashing', () => {
-  shallow(<TimeSetting type="" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} />);
+  shallow(<TimeSetting type="" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} isRunning={false}/>);
 });
 
 describe('structure', () => {
-  let wrapper = mount(<TimeSetting type="Session" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} />);
+  let wrapper = mount(<TimeSetting type="Session" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} isRunning={false}/>);
   
   it('has all elements with ids necessary', () => {
     expect(wrapper.find('#session-label')).toHaveLength(1);
@@ -40,9 +40,9 @@ describe('event listeners', () => {
   beforeEach(() => {
     mockHandleChange = jest.fn();
     mockHandleChangeByOne = jest.fn();
-    wrapper = shallow(<TimeSetting type="Session" length={25} handleChangeByOne={mockHandleChangeByOne} handleChange={mockHandleChange} />);
+    wrapper = shallow(<TimeSetting type="Session" length={25} handleChangeByOne={mockHandleChangeByOne} handleChange={mockHandleChange} isRunning={false}/>);
   });
-
+  
   it('the function handleChange is called when the input is changed', () => {
     wrapper.find('#session-length').simulate('change');
     expect(mockHandleChange).toBeCalled();
@@ -52,7 +52,7 @@ describe('event listeners', () => {
     wrapper.find('#session-length').simulate('blur');
     expect(mockHandleChange).toBeCalled();
   });
-
+  
   it('the function handleChangeByOne is called (with correct args) when the increment button is clicked', () => {
     wrapper.find('#session-increment').simulate('click');
     expect(mockHandleChangeByOne.mock.calls[0][0]).toBe('Session');
@@ -64,11 +64,16 @@ describe('event listeners', () => {
     expect(mockHandleChangeByOne.mock.calls[0][0]).toBe('Session');
     expect(mockHandleChangeByOne.mock.calls[0][1]).toBe(-1);
   });
+
+  it("disables input while running", () => {
+    wrapper = shallow(<TimeSetting type="Session" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} isRunning={true}/>);
+    expect(wrapper.find('input [disabled=true]')).toHaveLength(1);
+  });
 });
 
 describe('snapshot', () => {
   it('renders', () => {
-    const component = renderer.create(<TimeSetting type="Session" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} />);
+    const component = renderer.create(<TimeSetting type="Session" length={25} handleChangeByOne={jest.fn()} handleChange={jest.fn()} isRunning={false}/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });
