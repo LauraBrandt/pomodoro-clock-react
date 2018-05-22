@@ -32,7 +32,7 @@ describe('initial rendering', () => {
   it('passes the correct initial props to TimeDisplay component', () => {
     const wrapper = shallow(<ClockContainer />);
     const timeDisplayWrapper = wrapper.find(TimeDisplay);
-    expect(timeDisplayWrapper.at(0).props().type).toEqual('Session');
+    expect(timeDisplayWrapper.at(0).props().type).toEqual('session');
     expect(timeDisplayWrapper.at(0).props().time).toEqual(wrapper.state().sessionLength*60);
   });
 });
@@ -41,30 +41,72 @@ describe('change break and session lengths', () => {
   it('increments the length by one on button click and passes the new value', () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({sessionLength: 5});
-    const sessionIncrementButton = wrapper.find('#session-increment').simulate('click');
+    wrapper.find('#session-increment').simulate('click');
     expect(wrapper.state().sessionLength).toBe(6);
     expect(wrapper.find(TimeSetting).at(0).props().length).toBe(6);
   });
   
+  it('displays the new time in TimeDisplay on increment of current type', () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({sessionLength: 5, current: "session"});
+    wrapper.find('#session-increment').simulate('click'); // session length now 6 minutes
+    expect(wrapper.find(TimeDisplay).props().time).toBe(6*60);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("6:00");
+  }); 
+
+  it("doesn't change TimeDisplay on increment of non current type", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({
+      breakLength: 3, 
+      sessionLength: 5, 
+      timeLeft: 300, 
+      current: 'session'
+    });
+    wrapper.find('#break-increment').simulate('click'); // break length now 4 minutes
+    expect(wrapper.find(TimeDisplay).props().time).toBe(5*60); // no change
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("5:00");
+  }); 
+  
   it('decrements the length by one on button click and passes the new value', () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({sessionLength: 5});
-    const sessionDecrementButton = wrapper.find('#session-decrement').simulate('click');
+    wrapper.find('#session-decrement').simulate('click');
     expect(wrapper.state().sessionLength).toBe(4);
     expect(wrapper.find(TimeSetting).at(0).props().length).toBe(4);
   });
 
+  it('displays the new time in TimeDisplay on decrement of current type', () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({sessionLength: 5, current: 'session'});
+    wrapper.find('#session-decrement').simulate('click'); // session length now 4 minutes
+    expect(wrapper.find(TimeDisplay).props().time).toBe(4*60);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("4:00");
+  }); 
+
+  it("doesn't change TimeDisplay on decrement of non current type", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({
+      breakLength: 3, 
+      sessionLength: 5, 
+      timeLeft: 300, 
+      current: 'session'
+    });
+    wrapper.find('#break-decrement').simulate('click'); // break length now 2 minutes
+    expect(wrapper.find(TimeDisplay).props().time).toBe(5*60); // no change
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("5:00");
+  }); 
+
   it("can't go above 60 on button click and keeps the old value", () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({sessionLength: 60});
-    const sessionIncrementButton = wrapper.find('#session-increment').simulate('click');
+    wrapper.find('#session-increment').simulate('click');
     expect(wrapper.state().sessionLength).toBe(60);
   });
 
   it("can't go below 1 on button click and keeps the old value", () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({sessionLength: 1});
-    const sessionDecrementButton = wrapper.find('#session-decrement').simulate('click');
+    wrapper.find('#session-decrement').simulate('click');
     expect(wrapper.state().sessionLength).toBe(1);
   });
 
@@ -76,10 +118,57 @@ describe('change break and session lengths', () => {
         value: 20
       }
     }
-    const sessionDecrementButton = wrapper.find('#session-length').simulate('change', event);
+    wrapper.find('#session-length').simulate('change', event);
     expect(wrapper.state().sessionLength).toBe(20);
     expect(wrapper.find(TimeSetting).at(0).props().length).toBe(20);
   });
+
+  it("doesn't display the new time when input changed", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({timeLeft: 300});
+    const event = {
+      target: {
+        id: 'session-length',
+        value: 20
+      }
+    }
+    wrapper.find('#session-length').simulate('change', event);
+    expect(wrapper.find(TimeDisplay).props().time).not.toBe(20*60);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(300);
+  });
+
+  it('displays the new time in TimeDisplay when length of current type modified and then blurred', () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({timeLeft: 300, current: 'session'});
+    const event = {
+      target: {
+        id: 'session-length',
+        value: 20
+      }
+    }
+    wrapper.find('#session-length').simulate('blur', event);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(20*60);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("20:00");
+  }); 
+
+  it("doesn't change TimeDisplay when length of non current type modified and then blurred", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({
+      breakLength: 3, 
+      sessionLength: 5, 
+      timeLeft: 300, 
+      current: 'session'
+    });
+    const event = {
+      target: {
+        id: 'break-length',
+        value: 20
+      }
+    }
+    wrapper.find('#session-length').simulate('blur', event);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(300);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("5:00");
+  }); 
 
   it('sets the length to 1 if the length is less than one when the input is blurred', () => {
     const wrapper = mount(<ClockContainer />);
@@ -89,11 +178,25 @@ describe('change break and session lengths', () => {
         value: 0
       }
     }
-    const sessionDecrementButton = wrapper.find('#session-length').simulate('blur', event);
+    wrapper.find('#session-length').simulate('blur', event);
     expect(wrapper.state().sessionLength).toBe(1);
     event.target.value = -1;
     expect(wrapper.state().sessionLength).toBe(1);
   });
+
+  it("displays 1 minute in TimeDisplay if length less than 1 when input is blurred", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({timeLeft: 300});
+    const event = {
+      target: {
+        id: 'session-length',
+        value: 0
+      }
+    }
+    wrapper.find('#session-length').simulate('blur', event);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(1*60);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("1:00");
+  }); 
 
   it('sets the length to 60 if the length is greater than sixty when the input is blurred', () => {
     const wrapper = mount(<ClockContainer />);
@@ -103,11 +206,25 @@ describe('change break and session lengths', () => {
         value: 70
       }
     }
-    const sessionDecrementButton = wrapper.find('#session-length').simulate('blur', event);
+    wrapper.find('#session-length').simulate('blur', event);
     expect(wrapper.state().sessionLength).toBe(60);
     event.target.value = 61;
     expect(wrapper.state().sessionLength).toBe(60);
   });
+
+  it("displays 60 minutes in TimeDisplay if length > 60 when input is blurred", () => {
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({timeLeft: 300});
+    const event = {
+      target: {
+        id: 'session-length',
+        value: 61
+      }
+    }
+    wrapper.find('#session-length').simulate('blur', event);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(60*60);
+    expect(wrapper.find(TimeDisplay).find("#time-left").text()).toBe("60:00");
+  }); 
 });
 
 describe('play and pause', () => {
@@ -135,7 +252,7 @@ describe('reset', () => {
       breakLength: 3,
       timeLeft: 1006,
       isRunning: true,
-      current: 'Break'
+      current: 'break'
     });
 
     wrapper.find('#reset').simulate('click');
@@ -143,7 +260,7 @@ describe('reset', () => {
     expect(wrapper.state().breakLength).toBe(5);
     expect(wrapper.state().timeLeft).toBe(25*60);
     expect(wrapper.state().isRunning).toBe(false);
-    expect(wrapper.state().current).toBe('Session');
+    expect(wrapper.state().current).toBe('session');
   });
 });
 

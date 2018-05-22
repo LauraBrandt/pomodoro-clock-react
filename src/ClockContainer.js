@@ -13,6 +13,7 @@ class ClockContainer extends React.Component {
       breakLength: 5,
       timeLeft: 25*60,
       isRunning: false,
+      current: 'session',
     }
 
     this.handleReset = this.handleReset.bind(this);
@@ -27,6 +28,7 @@ class ClockContainer extends React.Component {
       breakLength: 5,
       timeLeft: 25*60,
       isRunning: false,
+      current: 'session',
     });
   }
 
@@ -39,23 +41,39 @@ class ClockContainer extends React.Component {
   handleLengthChangeByOne(type, change) {
     const key = type.toLowerCase() + 'Length';
     let newLength = this.state[key] + change;
+    
     if (newLength <= 0 || newLength > 60) {
       newLength = this.state[key]
     }
-    this.setState({ [key] : newLength });
+
+    const isChangingCurrentType = type.toLowerCase() === this.state.current;
+
+    this.setState({ 
+      [key] : newLength,
+      timeLeft : isChangingCurrentType ? newLength * 60 : this.state.timeLeft
+    });
   }
   
   handleLengthChange(e) {
-    const key = e.target.id.split('-')[0] + 'Length';
+    const type = e.target.id.split('-')[0];
+    const key = type + 'Length';
+    let newLength = Number(e.target.value);
 
-    this.setState({ [key] : Number(e.target.value) });
+    this.setState({ [key] : newLength });
 
     if (e.type === 'blur') {
       if (Number(e.target.value) <= 0) {
-        this.setState({ [key] : 1 });
+        newLength = 1;
       } else if ( Number(e.target.value) > 60) {
-        this.setState({ [key] : 60 });
+        newLength = 60;
       }
+
+      const isChangingCurrentType = type === this.state.current;
+
+      this.setState({
+        [key] : newLength,
+        timeLeft : isChangingCurrentType ? newLength * 60 : this.state.timeLeft
+      });
     }
   }
 
@@ -81,6 +99,7 @@ class ClockContainer extends React.Component {
         </div>
         <TimeDisplay 
           time={this.state.timeLeft} 
+          type={this.state.current}
           isRunning={this.state.isRunning}
         />
         <Controls 
