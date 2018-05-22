@@ -74,7 +74,7 @@ describe('change break and session lengths', () => {
     expect(wrapper.state().sessionLength).toBe(4);
     expect(wrapper.find(TimeSetting).at(0).props().length).toBe(4);
   });
-
+  
   it('displays the new time in TimeDisplay on decrement of current type', () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({sessionLength: 5, current: 'session'});
@@ -183,7 +183,7 @@ describe('change break and session lengths', () => {
     event.target.value = -1;
     expect(wrapper.state().sessionLength).toBe(1);
   });
-
+  
   it("displays 1 minute in TimeDisplay if length less than 1 when input is blurred", () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({timeLeft: 300});
@@ -228,6 +228,10 @@ describe('change break and session lengths', () => {
 });
 
 describe('play and pause', () => {
+  const RealDate = Date;
+
+  afterAll(() => global.Date = RealDate);
+
   it('toggles isRunning state and passes it as props', () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({isRunning: true});
@@ -241,6 +245,108 @@ describe('play and pause', () => {
     expect(wrapper.state().isRunning).toBeTruthy();
     expect(wrapper.find(TimeDisplay).props().isRunning).toBeTruthy();
     expect(wrapper.find(Controls).props().isRunning).toBeTruthy();
+  });
+
+  it('sets the correct end time when play button pressed and not already running', () => {
+    Date.now = jest.fn().mockReturnValue(1527020000000);
+    const wrapper = mount(<ClockContainer />);
+    wrapper.setState({timeLeft: 5*60, endTime: 0});
+
+    wrapper.find('#start_stop').simulate('click');
+    const newEndTime = Date.now() + (wrapper.state().timeLeft * 1000);
+    expect(wrapper.state().endTime).toBe(newEndTime);  // rounded to nearest second
+  });
+
+  it('starts the countdown when play button pressed and not already running', () => {
+    const wrapper = mount(<ClockContainer />);
+    jest.useFakeTimers();
+    wrapper.instance().countdown = jest.fn();
+    wrapper.update();
+
+    wrapper.find('#start_stop').simulate('click');
+    jest.runTimersToTime(5000);
+    expect(wrapper.instance().countdown).toHaveBeenCalledTimes(5);
+  });
+
+  it('decreases timeLeft by 1s every time countdown func is called and displays the new time in TimeDisplay', () => {
+    Date.now = jest.fn();
+    for (let dateVal = 1527020000000; dateVal < 1527020005000; dateVal += 1000) {
+      Date.now.mockReturnValueOnce(dateVal);
+    }
+      
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({ sessionLength: 5, timeLeft: 5*60, current: 'session', endTime: Date.now() + (5*60 * 1000) });
+
+    wrapper.instance().countdown();
+    wrapper.instance().countdown();
+    wrapper.instance().countdown();
+    wrapper.update();
+    expect(wrapper.state().timeLeft).toBe(5*60 - 3);
+    expect(wrapper.find(TimeDisplay).props().time).toBe(5*60 - 3);
+  });
+
+  it('stops counting down when pause button pressed', () => {
+    const wrapper = mount(<ClockContainer />);
+    jest.useFakeTimers();
+    wrapper.instance().countdown = jest.fn();
+    wrapper.update();
+
+    expect(setInterval).toHaveBeenCalledTimes(0);
+    expect(clearInterval).toHaveBeenCalledTimes(0);
+
+    wrapper.find('#start_stop').simulate('click');
+    
+    jest.runTimersToTime(2000);
+    expect(wrapper.instance().countdown).toHaveBeenCalledTimes(2);
+    
+    wrapper.find('#start_stop').simulate('click');
+    expect(clearInterval).toHaveBeenCalledTimes(1);
+    
+    jest.runTimersToTime(1000);
+    expect(wrapper.instance().countdown).toHaveBeenCalledTimes(2); // same as before, not run again
+  });
+
+  it('starts counting down from paused time and same session when play button pressed after pause', () => {
+    Date.now = jest.fn();
+    for (let dateVal = 1527020000000; dateVal < 1527020010000; dateVal += 1000) {
+      Date.now.mockReturnValueOnce(dateVal);
+    }
+      
+    jest.useFakeTimers();
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({ sessionLength: 5, timeLeft: 5*60, current: 'session', endTime: Date.now() + (5*60 * 1000) });
+
+    wrapper.instance().handleStartStop(); // play
+    jest.runTimersToTime(2000);
+    expect(wrapper.state().timeLeft).toBe(5*60-2);
+    
+    wrapper.instance().handleStartStop(); // pause
+    jest.runTimersToTime(3000);
+    expect(wrapper.state().timeLeft).toBe(5*60-2); // unchanged during pause
+    
+    wrapper.instance().handleStartStop(); // play
+    jest.runTimersToTime(4000);
+    expect(wrapper.state().timeLeft).not.toBe(5*60-4); // this would be if started counting down from original session length
+    expect(wrapper.state().timeLeft).toBe(5*60-6); // 2s from before pause + 4s from after pause
+    expect(wrapper.state().current).toBe('session');
+  });
+
+  it('stops counting down when time reaches 0', () => {
+    Date.now = jest.fn()
+      .mockReturnValueOnce(1527020000000)
+      .mockReturnValueOnce(1527020001000);
+
+    jest.useFakeTimers();
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({ timeLeft: 1, endTime: 1527020000000 });
+
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+
+    wrapper.instance().countdown();
+    expect(clearInterval).toBeCalled();
   });
 });
 
@@ -261,6 +367,26 @@ describe('reset', () => {
     expect(wrapper.state().timeLeft).toBe(25*60);
     expect(wrapper.state().isRunning).toBe(false);
     expect(wrapper.state().current).toBe('session');
+  });
+
+  it('stops the countdown timer if running', () => {
+    const wrapper = shallow(<ClockContainer />);
+    jest.useFakeTimers();
+    wrapper.instance().countdown = jest.fn();
+    wrapper.update();
+
+    expect(setInterval).toHaveBeenCalledTimes(0);
+    expect(clearInterval).toHaveBeenCalledTimes(0);
+
+    wrapper.instance().timer(wrapper.state().timeLeft); // start timer
+    jest.runTimersToTime(2000);
+    expect(wrapper.instance().countdown).toHaveBeenCalledTimes(2);
+    
+    wrapper.instance().handleReset(); // clear timer
+    expect(clearInterval).toHaveBeenCalledTimes(1);
+    
+    jest.runTimersToTime(1000);
+    expect(wrapper.instance().countdown).toHaveBeenCalledTimes(2); // same as before, not run again
   });
 });
 

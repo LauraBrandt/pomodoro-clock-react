@@ -12,27 +12,55 @@ class ClockContainer extends React.Component {
       sessionLength: 25,
       breakLength: 5,
       timeLeft: 25*60,
+      endTime: 0,
       isRunning: false,
-      current: 'session',
+      current: 'session'
     }
 
+    this.countdown = this.countdown.bind(this);
+    this.timer = this.timer.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.handleStartStop = this.handleStartStop.bind(this);
     this.handleLengthChangeByOne = this.handleLengthChangeByOne.bind(this);
     this.handleLengthChange = this.handleLengthChange.bind(this);
   }
 
+  countdown() {
+    const secondsLeft = Math.round((this.state.endTime - Date.now()) / 1000);
+      if (secondsLeft < 0) {
+        clearInterval(this.countdownInterval);
+        return;
+      }
+
+      this.setState({timeLeft: secondsLeft});
+  }
+
+  timer() {
+    const endTime = Date.now() + (this.state.timeLeft * 1000); // in ms
+    this.setState({ endTime });
+
+    this.countdownInterval = setInterval(this.countdown, 1000);
+  }
+
   handleReset() {
+    clearInterval(this.countdownInterval);
+    
     this.setState({
       sessionLength: 25,
       breakLength: 5,
       timeLeft: 25*60,
       isRunning: false,
-      current: 'session',
+      current: 'session'
     });
   }
 
   handleStartStop() {
+    if (!this.state.isRunning) {
+      this.timer(); // play
+    } else {
+      clearInterval(this.countdownInterval); // pause
+    }
+
     this.setState(prevState => ({
       isRunning: !prevState.isRunning
     }));
