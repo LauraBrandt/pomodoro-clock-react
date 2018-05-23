@@ -6,6 +6,11 @@ exports[`snapshot renders 1`] = `
 >
   <div
     className="time-display-fill"
+    style={
+      Object {
+        "height": "undefined%",
+      }
+    }
   />
   <label
     htmlFor="time-left"

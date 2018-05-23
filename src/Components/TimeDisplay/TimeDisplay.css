@@ -19,6 +19,7 @@
   height: 100%;
   background: #ba0000;
   z-index: -1;
+  transition: height 0.4s linear;
 }
 
 #timer-label {

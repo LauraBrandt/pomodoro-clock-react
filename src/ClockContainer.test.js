@@ -44,6 +44,52 @@ describe('initial rendering', () => {
   });
 });
 
+describe('style', () => {
+  it('sets percentHeight correctly', () => {
+    Date.now = jest.fn();
+    for (let dateVal = 1527020000000; dateVal < 1527020302000; dateVal += 1000) {
+      Date.now.mockReturnValueOnce(dateVal);
+    }
+  
+    jest.useFakeTimers();
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({ 
+      sessionLength: 5,
+      timeLeft: 300,
+      isRunning: true
+    });
+
+    wrapper.instance().countdown();
+    wrapper.update();
+    expect(wrapper.state().percentLeft).toBe(100);
+    
+    for (let i=0; i<75; i++) {
+      wrapper.instance().countdown();
+    }
+    let percentLeft = Math.round(wrapper.state().percentLeft)
+    expect(percentLeft).toBe(75);
+    
+    for (let i=0; i<75; i++) {
+      wrapper.instance().countdown();
+    }
+    percentLeft = Math.round(wrapper.state().percentLeft)
+    expect(percentLeft).toBe(50);
+
+    for (let i=0; i<75; i++) {
+      wrapper.instance().countdown();
+    }
+    percentLeft = Math.round(wrapper.state().percentLeft)
+    expect(percentLeft).toBe(25);
+
+    for (let i=0; i<75; i++) {
+      wrapper.instance().countdown();
+    }
+    percentLeft = Math.round(wrapper.state().percentLeft)
+    expect(percentLeft).toBe(0);
+  });
+});
+
 describe('change break and session lengths', () => {
   it('increments the length by one on button click and passes the new value', () => {
     const wrapper = mount(<ClockContainer />);

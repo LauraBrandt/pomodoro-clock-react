@@ -12,6 +12,7 @@ class ClockContainer extends React.Component {
       sessionLength: 25,
       breakLength: 5,
       timeLeft: 25*60,
+      percentLeft: 100,
       endTime: 0,
       isRunning: false,
       current: 'session'
@@ -46,7 +47,8 @@ class ClockContainer extends React.Component {
         return;
       }
 
-      this.setState({timeLeft: secondsLeft});
+      const percentLeft = 100 * secondsLeft/(60 * this.state[`${this.state.current}Length`]);
+      this.setState({timeLeft: secondsLeft, percentLeft});
   }
 
   timer() {
@@ -149,6 +151,7 @@ class ClockContainer extends React.Component {
           time={this.state.timeLeft} 
           type={this.state.current}
           isRunning={this.state.isRunning}
+          percentHeight={this.state.percentLeft}
         />
         <Controls 
           isRunning={this.state.isRunning} 
