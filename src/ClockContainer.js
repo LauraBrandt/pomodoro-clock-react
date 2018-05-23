@@ -172,6 +172,7 @@ class ClockContainer extends React.Component {
           type={this.state.current}
           isRunning={this.state.isRunning}
           percentHeight={this.state.percentLeft}
+          handleStartStop={this.handleStartStop}
         />
         <Controls 
           isRunning={this.state.isRunning} 

@@ -3,6 +3,7 @@
 exports[`snapshot renders 1`] = `
 <div
   className="time-display"
+  onClick={[Function]}
 >
   <div
     className="time-display-fill"

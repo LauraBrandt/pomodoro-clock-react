@@ -8,9 +8,9 @@ export function formatTime(seconds) {
   return `${minutes}:${secondsRemaining < 10 ? '0' : ''}${secondsRemaining}`;
 }
 
-const TimeDisplay = ({type, time, percentHeight}) => {
+const TimeDisplay = ({type, time, percentHeight, handleStartStop}) => {
   return(
-    <div className='time-display'>
+    <div className='time-display' onClick={handleStartStop}>
       <div className='time-display-fill' style={{height: `${percentHeight}%`}}></div>
       <label htmlFor="time-left" id="timer-label">{type}</label>
       <div id="time-left" className={time <= 10 ? 'last-ten-seconds' : ''}>{formatTime(time)}</div>
@@ -21,7 +21,8 @@ const TimeDisplay = ({type, time, percentHeight}) => {
 TimeDisplay.propTypes = {
   type: PropTypes.string.isRequired,
   time: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  percentHeight: PropTypes.number
+  percentHeight: PropTypes.number,
+  handleStartStop: PropTypes.func.isRequired
 }
 
 export default TimeDisplay;

@@ -4,13 +4,13 @@ import renderer from 'react-test-renderer';
 import TimeDisplay, {formatTime} from './TimeDisplay';
 
 it('renders without crashing', () => {
-  shallow(<TimeDisplay type="" time=""/>);
+  shallow(<TimeDisplay type="" time="" handleStartStop={jest.fn()}/>);
 });
 
 describe('structure', () => {
   let wrapper;
   beforeAll(() => {
-    wrapper = mount(<TimeDisplay type="Session" time={25*60}/>);
+    wrapper = mount(<TimeDisplay type="Session" time={25*60} handleStartStop={jest.fn()}/>);
   });
   
   it('has all elements with ids necessary', () => {
@@ -51,23 +51,34 @@ describe('formatTime', () => {
   });
 });
 
-describe('', () => {
+describe('last-ten-seconds', () => {
   it('adds class to turn red in last 10 seconds', () => {
-    const wrapper = shallow(<TimeDisplay type="Session" time={10}/>);
+    const wrapper = shallow(<TimeDisplay type="Session" time={10} handleStartStop={jest.fn()}/>);
     expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
     wrapper.setProps({ time: 0 });
     expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
   });
 
   it('removes last-ten-seconds class when time > 10', () => {
-    const wrapper = shallow(<TimeDisplay type="Session" time={11}/>);
+    const wrapper = shallow(<TimeDisplay type="Session" time={11} handleStartStop={jest.fn()}/>);
     expect(wrapper.find('.last-ten-seconds')).toHaveLength(0);
+  });
+});
+
+describe('handleStartStop', () => {
+  it('calls handleStartStop on click of TimeDisplay', () => {
+    const mockHandleStartStop = jest.fn();
+    const wrapper = shallow(<TimeDisplay type="" time="" handleStartStop={mockHandleStartStop}/>);
+    
+    expect(mockHandleStartStop).not.toBeCalled();
+    wrapper.simulate('click');
+    expect(mockHandleStartStop).toBeCalled();
   });
 });
 
 describe('snapshot', () => {
   it('renders', () => {
-    const component = renderer.create(<TimeDisplay type="Session" time={488}/>);
+    const component = renderer.create(<TimeDisplay type="Session" time={488} handleStartStop={jest.fn()}/>);
     let tree = component.toJSON();
     expect(tree).toMatchSnapshot();
   });

@@ -10,6 +10,25 @@
   align-items: center;
   flex-direction: column;
   overflow: hidden;
+  cursor: pointer;
+}
+
+.time-display:active {
+  border: 5px solid #a50000;
+}
+
+.time-display:active .time-display-fill {
+  background: #c50000;
+}
+
+.time-display:hover .time-display-fill {
+  background: #bf0000;
+}
+
+.time-display:active #timer-label,
+.time-display:active #time-left {
+  top: 2px;
+  left: 2px;
 }
 
 .time-display-fill {
@@ -25,11 +44,15 @@
 #timer-label {
   font-size: 2rem;
   text-transform: uppercase;
+  position: relative;
+  user-select: none;
 }
 
 #time-left {
   font-size: 5rem;
   padding: 1rem 0;
+  position: relative;
+  user-select: none; 
 }
 
 .last-ten-seconds {
