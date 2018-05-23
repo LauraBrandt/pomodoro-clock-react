@@ -548,6 +548,13 @@ describe('audio', () => {
     expect(wrapper.instance().beep.play).toBeCalled();
   });
 
+  it("doesn't play audio when muted", () => {
+    wrapper.setState({ isMuted : true })
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+    expect(wrapper.instance().beep.play).not.toBeCalled();
+  });
+
   it('stops and resets audio when countdown paused', () => {
     wrapper.instance().countdown();
     expect(wrapper.instance().beep.play).toBeCalled();
@@ -566,6 +573,14 @@ describe('audio', () => {
     wrapper.instance().handleReset();
     expect(wrapper.instance().beep.pause).toBeCalled();
     expect(wrapper.instance().beep.currentTime).toBe(0);
+  });
+
+  it('handleMute toggles muted state', () => {
+    expect(wrapper.state().isMuted).toBeFalsy();
+    wrapper.instance().handleMute();
+    expect(wrapper.state().isMuted).toBeTruthy();
+    wrapper.instance().handleMute();
+    expect(wrapper.state().isMuted).toBeFalsy();
   });
 });
 

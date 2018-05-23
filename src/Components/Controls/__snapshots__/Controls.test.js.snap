@@ -24,5 +24,15 @@ exports[`snapshot renders 1`] = `
       title="reset"
     />
   </button>
+  <button
+    id="mute"
+    onClick={[Function]}
+    title="Mute"
+  >
+    <i
+      className="fas fa-volume-up"
+      title="Mute"
+    />
+  </button>
 </div>
 `;

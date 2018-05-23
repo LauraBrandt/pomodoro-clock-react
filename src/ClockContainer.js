@@ -15,7 +15,8 @@ class ClockContainer extends React.Component {
       percentLeft: 100,
       endTime: 0,
       isRunning: false,
-      current: 'session'
+      current: 'session',
+      isMuted: false
     }
 
     this.countdown = this.countdown.bind(this);
@@ -24,12 +25,13 @@ class ClockContainer extends React.Component {
     this.handleStartStop = this.handleStartStop.bind(this);
     this.handleLengthChangeByOne = this.handleLengthChangeByOne.bind(this);
     this.handleLengthChange = this.handleLengthChange.bind(this);
+    this.handleMute = this.handleMute.bind(this);
   }
 
   countdown() {
     const secondsLeft = Math.round((this.state.endTime - Date.now()) / 1000);
       if (secondsLeft === 0) {
-        this.beep.play();
+        !this.state.isMuted && this.beep.play();
       }
 
       if (secondsLeft < 0) {
@@ -134,6 +136,11 @@ class ClockContainer extends React.Component {
     }
   }
 
+  handleMute() {
+    const isMuted = !this.state.isMuted;
+    this.setState({ isMuted });
+  }
+
   render() {
     return (
       <div className="clock-container">
@@ -166,6 +173,8 @@ class ClockContainer extends React.Component {
           isRunning={this.state.isRunning} 
           reset={this.handleReset} 
           handleStartStop={this.handleStartStop}
+          isMuted={this.state.isMuted}
+          handleMute={this.handleMute}
         />
         <footer>Designed and coded by <a href="https://github.com/LauraBrandt">Laura Brandt</a></footer>
         <audio id="beep" src="https://goo.gl/65cBl1" ref={audio => this.beep = audio} preload="auto" />
