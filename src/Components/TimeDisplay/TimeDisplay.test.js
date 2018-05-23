@@ -54,14 +54,23 @@ describe('formatTime', () => {
 describe('last-ten-seconds', () => {
   it('adds class to turn red in last 10 seconds', () => {
     const wrapper = shallow(<TimeDisplay type="Session" time={10} handleStartStop={jest.fn()}/>);
-    expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
+    expect(wrapper.find('.last-ten-seconds')).toHaveLength(2);
     wrapper.setProps({ time: 0 });
-    expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
+    expect(wrapper.find('.last-ten-seconds')).toHaveLength(2);
   });
 
   it('removes last-ten-seconds class when time > 10', () => {
     const wrapper = shallow(<TimeDisplay type="Session" time={11} handleStartStop={jest.fn()}/>);
     expect(wrapper.find('.last-ten-seconds')).toHaveLength(0);
+  });
+});
+
+describe('blink', () => {
+  it('adds blink class correctly', () => {
+    const wrapper = shallow(<TimeDisplay type="Session" time={10} handleStartStop={jest.fn()} blink={true}/>);
+    expect(wrapper.find('.blink')).toHaveLength(3);
+    wrapper.setProps({ blink: false });
+    expect(wrapper.find('.blink')).toHaveLength(0);
   });
 });
 

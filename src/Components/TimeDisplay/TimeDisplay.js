@@ -8,12 +8,16 @@ export function formatTime(seconds) {
   return `${minutes}:${secondsRemaining < 10 ? '0' : ''}${secondsRemaining}`;
 }
 
-const TimeDisplay = ({type, time, percentHeight, handleStartStop}) => {
+const TimeDisplay = ({type, time, percentHeight, handleStartStop, blink}) => {
   return(
     <div className='time-display' onClick={handleStartStop}>
-      <div className='time-display-fill' style={{height: `${percentHeight}%`}}></div>
-      <label htmlFor="time-left" id="timer-label">{type}</label>
-      <div id="time-left" className={time <= 10 ? 'last-ten-seconds' : ''}>{formatTime(time)}</div>
+      <div className={`time-display-fill${blink ? ' blink' : ''}`} style={{height: `${percentHeight}%`}} />
+      <label htmlFor="time-left" id="timer-label" className={`${time <= 10 ? 'last-ten-seconds' : ''}${blink ? ' blink' : ''}`}>
+        {type}
+      </label>
+      <div id="time-left" className={`${time <= 10 ? 'last-ten-seconds' : ''}${blink ? ' blink' : ''}`}>
+        {formatTime(time)}
+      </div>
     </div>
   );
 }
@@ -22,7 +26,8 @@ TimeDisplay.propTypes = {
   type: PropTypes.string.isRequired,
   time: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   percentHeight: PropTypes.number,
-  handleStartStop: PropTypes.func.isRequired
+  handleStartStop: PropTypes.func.isRequired,
+  blink: PropTypes.bool
 }
 
 export default TimeDisplay;

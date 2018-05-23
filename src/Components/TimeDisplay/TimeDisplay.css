@@ -56,7 +56,38 @@
 }
 
 .last-ten-seconds {
-  color: #ba0000;
+  color: #dd0000;
+  text-shadow: 0 0 0.4em rgba(255, 255, 255, 0.2),
+               0 0 0.01em rgba(255, 255, 255, 0.8);
+
+}
+
+.time-display-fill.blink {
+  animation: blink-animation 1s;
+}
+
+@keyframes blink-animation {
+  0% {height: 100%}
+  32% {height: 100%}
+  33% {height: 0%}
+  66% {height: 0%}
+  67% {height: 100%}
+  99% {height: 100%}
+  100% {height: 0%}
+}
+
+.last-ten-seconds.blink {
+  animation: color-blink-animation 1s;
+}
+
+@keyframes color-blink-animation {
+  0% {color: #fff}
+  32% {color: #fff}
+  33% {color: #ba0000}
+  66% {color: #ba0000}
+  67% {color: #fff}
+  99% {color: #fff}
+  100% {color: #ba0000}
 }
 
 @media (max-width: 450px) {

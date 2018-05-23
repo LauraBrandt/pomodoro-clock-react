@@ -16,7 +16,8 @@ class ClockContainer extends React.Component {
       endTime: 0,
       isRunning: false,
       current: 'session',
-      isMuted: false
+      isMuted: false,
+      finished: false
     }
 
     this.countdown = this.countdown.bind(this);
@@ -33,24 +34,25 @@ class ClockContainer extends React.Component {
     
     if (secondsLeft === 0) {
       !this.state.isMuted && this.beep.play();
+      this.setState({ finished: true });
     }
-
+    
     if (secondsLeft < 0) {
       clearInterval(this.countdownInterval);
 
+      let nextType;
       if (this.state.current === 'session') {
-        this.setState({
-          current: 'break',
-          timeLeft: this.state.breakLength * 60,
-          percentLeft: 100
-        });
+        nextType = 'break'
       } else {
-        this.setState({ 
-          current: 'session',
-          timeLeft: this.state.sessionLength * 60,
-          percentLeft: 100
-        });
+        nextType = 'session'
       }
+
+      this.setState({
+        current: nextType,
+        timeLeft: this.state[`${nextType}Length`] * 60,
+        percentLeft: 100,
+        finished: false
+      });
 
       this.timer();
       return;
@@ -76,7 +78,8 @@ class ClockContainer extends React.Component {
       timeLeft: 25*60,
       isRunning: false,
       current: 'session',
-      percentLeft: 100
+      percentLeft: 100,
+      finished: false
     });
 
     this.beep.pause();
@@ -173,6 +176,7 @@ class ClockContainer extends React.Component {
           isRunning={this.state.isRunning}
           percentHeight={this.state.percentLeft}
           handleStartStop={this.handleStartStop}
+          blink={this.state.finished}
         />
         <Controls 
           isRunning={this.state.isRunning} 

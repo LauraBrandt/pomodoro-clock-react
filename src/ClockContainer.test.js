@@ -111,6 +111,22 @@ describe('style', () => {
     wrapper.instance().handleReset();
     expect(wrapper.state().percentLeft).toBe(100);
   });
+
+  it.only('sets finished to true at time 0, then back to false 1s later', () => {
+    Date.now = jest.fn()
+      .mockReturnValueOnce(1527020000000)
+      .mockReturnValueOnce(1527020001000)
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.instance().beep = { play: jest.fn(), pause: jest.fn(), currentTime: 5 }
+    wrapper.setState({ timeLeft: 1, endTime: 1527020000000, isRunning: true, finished: false });
+
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+    expect(wrapper.state().finished).toBeTruthy();
+    wrapper.instance().countdown();
+    expect(wrapper.state().finished).toBeFalsy();
+  });
 });
 
 describe('change break and session lengths', () => {
@@ -438,7 +454,8 @@ describe('reset', () => {
       breakLength: 3,
       timeLeft: 1006,
       isRunning: true,
-      current: 'break'
+      current: 'break',
+      finished: true
     });
 
     wrapper.find('#reset').simulate('click');
@@ -447,6 +464,7 @@ describe('reset', () => {
     expect(wrapper.state().timeLeft).toBe(25*60);
     expect(wrapper.state().isRunning).toBe(false);
     expect(wrapper.state().current).toBe('session');
+    expect(wrapper.state().finished).toBe(false);
   });
 
   it('stops the countdown timer if running', () => {
