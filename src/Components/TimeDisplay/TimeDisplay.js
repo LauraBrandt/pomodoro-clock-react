@@ -13,7 +13,7 @@ const TimeDisplay = ({type, time, percentHeight}) => {
     <div className='time-display'>
       <div className='time-display-fill' style={{height: `${percentHeight}%`}}></div>
       <label htmlFor="time-left" id="timer-label">{type}</label>
-      <div id="time-left">{formatTime(time)}</div>
+      <div id="time-left" className={time <= 10 ? 'last-ten-seconds' : ''}>{formatTime(time)}</div>
     </div>
   );
 }

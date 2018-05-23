@@ -19,6 +19,7 @@ exports[`snapshot renders 1`] = `
     Session
   </label>
   <div
+    className=""
     id="time-left"
   >
     8:08

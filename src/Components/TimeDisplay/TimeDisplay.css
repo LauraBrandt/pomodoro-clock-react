@@ -32,6 +32,10 @@
   padding: 1rem 0;
 }
 
+.last-ten-seconds {
+  color: #ba0000;
+}
+
 @media (max-width: 450px) {
   .time-display {
     width: 300px;

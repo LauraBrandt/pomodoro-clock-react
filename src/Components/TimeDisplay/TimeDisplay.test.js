@@ -51,6 +51,20 @@ describe('formatTime', () => {
   });
 });
 
+describe('', () => {
+  it('adds class to turn red in last 10 seconds', () => {
+    const wrapper = shallow(<TimeDisplay type="Session" time={10}/>);
+    expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
+    wrapper.setProps({ time: 0 });
+    expect(wrapper.find('.last-ten-seconds')).toHaveLength(1);
+  });
+
+  it('removes last-ten-seconds class when time > 10', () => {
+    const wrapper = shallow(<TimeDisplay type="Session" time={11}/>);
+    expect(wrapper.find('.last-ten-seconds')).toHaveLength(0);
+  });
+});
+
 describe('snapshot', () => {
   it('renders', () => {
     const component = renderer.create(<TimeDisplay type="Session" time={488}/>);
