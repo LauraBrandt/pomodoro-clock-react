@@ -28,6 +28,10 @@ class ClockContainer extends React.Component {
 
   countdown() {
     const secondsLeft = Math.round((this.state.endTime - Date.now()) / 1000);
+      if (secondsLeft === 0) {
+        this.beep.play();
+      }
+
       if (secondsLeft < 0) {
         clearInterval(this.countdownInterval);
 
@@ -68,6 +72,9 @@ class ClockContainer extends React.Component {
       isRunning: false,
       current: 'session'
     });
+
+    this.beep.pause();
+    this.beep.currentTime = 0;
   }
 
   handleStartStop() {
@@ -79,6 +86,8 @@ class ClockContainer extends React.Component {
       this.timer(); // play
     } else {
       clearInterval(this.countdownInterval); // pause
+      this.beep.pause();
+      this.beep.currentTime = 0;
     }
   }
 
@@ -159,6 +168,7 @@ class ClockContainer extends React.Component {
           handleStartStop={this.handleStartStop}
         />
         <footer>Designed and coded by <a href="https://github.com/LauraBrandt">Laura Brandt</a></footer>
+        <audio id="beep" src="https://goo.gl/65cBl1" ref={audio => this.beep = audio} preload="auto" />
       </div>
     );
   }

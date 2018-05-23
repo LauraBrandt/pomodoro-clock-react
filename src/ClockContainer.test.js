@@ -25,6 +25,7 @@ describe('initial rendering', () => {
     expect(wrapper.find(Controls)).toHaveLength(1);
     expect(wrapper.find('header')).toHaveLength(1);
     expect(wrapper.find('footer')).toHaveLength(1);
+    expect(wrapper.find('audio#beep')).toHaveLength(1);
   });
   
   it('passes the correct initial props to TimeSetting components', () => {
@@ -50,10 +51,13 @@ describe('style', () => {
     for (let dateVal = 1527020000000; dateVal < 1527020302000; dateVal += 1000) {
       Date.now.mockReturnValueOnce(dateVal);
     }
-  
+    
     jest.useFakeTimers();
-
+    
     const wrapper = shallow(<ClockContainer />);
+    
+    wrapper.instance().beep = { play: () => {}, pause: () => {} }
+    
     wrapper.setState({ 
       sessionLength: 5,
       timeLeft: 300,
@@ -386,6 +390,9 @@ describe('play and pause', () => {
     jest.useFakeTimers();
 
     const wrapper = shallow(<ClockContainer />);
+
+    wrapper.instance().beep = { play: () => {}, pause: () => {} }
+
     wrapper.setState({ sessionLength: 5, timeLeft: 5*60, current: 'session', endTime: Date.now() + (5*60 * 1000) });
 
     wrapper.instance().handleStartStop(); // play
@@ -427,6 +434,8 @@ describe('reset', () => {
     const wrapper = shallow(<ClockContainer />);
     jest.useFakeTimers();
     wrapper.instance().countdown = jest.fn();
+    wrapper.instance().beep = { play: () => {}, pause: () => {} }
+
     wrapper.update();
 
     expect(setInterval).toHaveBeenCalledTimes(0);
@@ -454,6 +463,9 @@ describe('toggle between break and session times', () => {
     jest.useFakeTimers();
 
     const wrapper = shallow(<ClockContainer />);
+
+    wrapper.instance().beep = { play: () => {}, pause: () => {} }
+
     wrapper.setState({ 
       sessionLength: 2,
       breakLength: 1,
@@ -492,6 +504,9 @@ describe('toggle between break and session times', () => {
     jest.useFakeTimers();
 
     const wrapper = shallow(<ClockContainer />);
+
+    wrapper.instance().beep = { play: () => {}, pause: () => {} }
+
     wrapper.setState({
       sessionLength: 2,
       breakLength: 1,
@@ -512,6 +527,45 @@ describe('toggle between break and session times', () => {
     
     jest.runTimersToTime(2000);
     expect(wrapper.state().timeLeft).toBe(newTime-2);
+  });
+});
+
+describe('audio', () => {
+  let wrapper;
+  beforeEach(() => {
+    jest.useFakeTimers();
+
+    Date.now = jest.fn().mockReturnValueOnce(1527020000000)
+
+    wrapper = shallow(<ClockContainer />);
+    wrapper.instance().beep = { play: jest.fn(), pause: jest.fn(), currentTime: 5 }
+    wrapper.setState({ timeLeft: 1, endTime: 1527020000000, isRunning: true });
+  });
+
+  it('plays audio when countdown gets to 0', () => {
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+    expect(wrapper.instance().beep.play).toBeCalled();
+  });
+
+  it('stops and resets audio when countdown paused', () => {
+    wrapper.instance().countdown();
+    expect(wrapper.instance().beep.play).toBeCalled();
+    expect(wrapper.instance().beep.currentTime).toBe(5);
+
+    wrapper.instance().handleStartStop();
+    expect(wrapper.instance().beep.pause).toBeCalled();
+    expect(wrapper.instance().beep.currentTime).toBe(0);
+  });
+
+  it('stops and resets audio when timer reset', () => {
+    wrapper.instance().countdown();
+    expect(wrapper.instance().beep.play).toBeCalled();
+    expect(wrapper.instance().beep.currentTime).toBe(5);
+
+    wrapper.instance().handleReset();
+    expect(wrapper.instance().beep.pause).toBeCalled();
+    expect(wrapper.instance().beep.currentTime).toBe(0);
   });
 });
 
