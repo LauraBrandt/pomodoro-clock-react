@@ -6,6 +6,13 @@ import TimeSetting from './Components/TimeSetting/TimeSetting';
 import TimeDisplay from './Components/TimeDisplay/TimeDisplay';
 import Controls from './Components/Controls/Controls';
 
+const RealDate = Date;
+
+afterEach(() => {
+  global.Date = RealDate;
+  jest.clearAllTimers();
+});
+
 describe('initial rendering', () => {
   it('renders without crashing', () => {
     shallow(<ClockContainer />);
@@ -250,10 +257,6 @@ describe('change break and session lengths', () => {
 });
 
 describe('play and pause', () => {
-  const RealDate = Date;
-
-  afterAll(() => global.Date = RealDate);
-
   it('toggles isRunning state and passes it as props', () => {
     const wrapper = mount(<ClockContainer />);
     wrapper.setState({isRunning: true});
@@ -292,7 +295,7 @@ describe('play and pause', () => {
 
   it('decreases timeLeft by 1s every time countdown func is called and displays the new time in TimeDisplay', () => {
     Date.now = jest.fn();
-    for (let dateVal = 1527020000000; dateVal < 1527020005000; dateVal += 1000) {
+    for (let dateVal = 1527020000000; dateVal < 1527020004000; dateVal += 1000) {
       Date.now.mockReturnValueOnce(dateVal);
     }
       
@@ -330,7 +333,7 @@ describe('play and pause', () => {
 
   it('starts counting down from paused time and same session when play button pressed after pause', () => {
     Date.now = jest.fn();
-    for (let dateVal = 1527020000000; dateVal < 1527020010000; dateVal += 1000) {
+    for (let dateVal = 1527020000000; dateVal < 1527020009000; dateVal += 1000) {
       Date.now.mockReturnValueOnce(dateVal);
     }
       
@@ -352,23 +355,6 @@ describe('play and pause', () => {
     expect(wrapper.state().timeLeft).not.toBe(5*60-4); // this would be if started counting down from original session length
     expect(wrapper.state().timeLeft).toBe(5*60-6); // 2s from before pause + 4s from after pause
     expect(wrapper.state().current).toBe('session');
-  });
-
-  it('stops counting down when time reaches 0', () => {
-    Date.now = jest.fn()
-      .mockReturnValueOnce(1527020000000)
-      .mockReturnValueOnce(1527020001000);
-
-    jest.useFakeTimers();
-
-    const wrapper = shallow(<ClockContainer />);
-    wrapper.setState({ timeLeft: 1, endTime: 1527020000000 });
-
-    wrapper.instance().countdown();
-    expect(wrapper.state().timeLeft).toBe(0);
-
-    wrapper.instance().countdown();
-    expect(clearInterval).toBeCalled();
   });
 });
 
@@ -409,6 +395,77 @@ describe('reset', () => {
     
     jest.runTimersToTime(1000);
     expect(wrapper.instance().countdown).toHaveBeenCalledTimes(2); // same as before, not run again
+  });
+});
+
+describe('toggle between break and session times', () => {
+  it('toggles label and start time (break/session) of TimeDisplay when countdown gets to 0', () => {
+    Date.now = jest.fn();
+    for (let dateVal = 1527020000000; dateVal < 1527020064000; dateVal += 1000) {
+      Date.now.mockReturnValueOnce(dateVal);
+    }
+  
+    jest.useFakeTimers();
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({ 
+      sessionLength: 2,
+      breakLength: 1,
+      timeLeft: 1, 
+      endTime: 1527020000000, 
+      current: 'session',
+      isRunning: true
+    });
+
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+
+    wrapper.instance().countdown();
+    expect(clearInterval).toHaveBeenCalledTimes(1);
+    wrapper.update();
+    expect(wrapper.find(TimeDisplay).props().type).toBe('break');
+    expect(wrapper.find(TimeDisplay).props().time).toBe(wrapper.state().breakLength * 60);
+
+    for (let i=0; i<=60; i++) {
+      wrapper.instance().countdown();
+    }
+    expect(clearInterval).toHaveBeenCalledTimes(2);
+    wrapper.update();
+    expect(wrapper.find(TimeDisplay).props().type).toBe('session');
+    expect(wrapper.find(TimeDisplay).props().time).toBe(wrapper.state().sessionLength * 60);
+  });
+
+  it('starts counting down next timer when timer gets to 0', () => {
+    Date.now = jest.fn()
+      .mockReturnValueOnce(1527020000000) // countdown
+      .mockReturnValueOnce(1527020001000) // countdown
+      .mockReturnValueOnce(1527020001000) // timer (wrapper.update)
+      .mockReturnValueOnce(1527020002000) // countdown
+      .mockReturnValueOnce(1527020003000) // countdown
+  
+    jest.useFakeTimers();
+
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.setState({
+      sessionLength: 2,
+      breakLength: 1,
+      timeLeft: 1, 
+      endTime: 1527020000000, 
+      current: 'session',
+      isRunning: true
+    });
+
+    wrapper.instance().countdown();
+    expect(wrapper.state().timeLeft).toBe(0);
+
+    wrapper.instance().countdown();
+    wrapper.update();
+
+    const newTime = wrapper.state().breakLength * 60;
+    expect(wrapper.find(TimeDisplay).props().time).toBe(newTime);
+    
+    jest.runTimersToTime(2000);
+    expect(wrapper.state().timeLeft).toBe(newTime-2);
   });
 });
 

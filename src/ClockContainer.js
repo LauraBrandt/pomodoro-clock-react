@@ -29,6 +29,20 @@ class ClockContainer extends React.Component {
     const secondsLeft = Math.round((this.state.endTime - Date.now()) / 1000);
       if (secondsLeft < 0) {
         clearInterval(this.countdownInterval);
+
+        if (this.state.current === 'session') {
+          this.setState({
+            current: 'break',
+            timeLeft: this.state.breakLength * 60
+          });
+        } else {
+          this.setState({ 
+            current: 'session',
+            timeLeft: this.state.sessionLength * 60
+          });
+        }
+
+        this.timer();
         return;
       }
 
@@ -55,15 +69,15 @@ class ClockContainer extends React.Component {
   }
 
   handleStartStop() {
-    if (!this.state.isRunning) {
+    const isRunning = !this.state.isRunning;
+
+    this.setState({ isRunning });
+
+    if (isRunning) {
       this.timer(); // play
     } else {
       clearInterval(this.countdownInterval); // pause
     }
-
-    this.setState(prevState => ({
-      isRunning: !prevState.isRunning
-    }));
   }
 
   handleLengthChangeByOne(type, change) {
