@@ -30,31 +30,34 @@ class ClockContainer extends React.Component {
 
   countdown() {
     const secondsLeft = Math.round((this.state.endTime - Date.now()) / 1000);
-      if (secondsLeft === 0) {
-        !this.state.isMuted && this.beep.play();
+    
+    if (secondsLeft === 0) {
+      !this.state.isMuted && this.beep.play();
+    }
+
+    if (secondsLeft < 0) {
+      clearInterval(this.countdownInterval);
+
+      if (this.state.current === 'session') {
+        this.setState({
+          current: 'break',
+          timeLeft: this.state.breakLength * 60,
+          percentLeft: 100
+        });
+      } else {
+        this.setState({ 
+          current: 'session',
+          timeLeft: this.state.sessionLength * 60,
+          percentLeft: 100
+        });
       }
 
-      if (secondsLeft < 0) {
-        clearInterval(this.countdownInterval);
+      this.timer();
+      return;
+    }
 
-        if (this.state.current === 'session') {
-          this.setState({
-            current: 'break',
-            timeLeft: this.state.breakLength * 60
-          });
-        } else {
-          this.setState({ 
-            current: 'session',
-            timeLeft: this.state.sessionLength * 60
-          });
-        }
-
-        this.timer();
-        return;
-      }
-
-      const percentLeft = 100 * secondsLeft/(60 * this.state[`${this.state.current}Length`]);
-      this.setState({timeLeft: secondsLeft, percentLeft});
+    const percentLeft = 100 * secondsLeft/(60 * this.state[`${this.state.current}Length`]);
+    this.setState({timeLeft: secondsLeft, percentLeft});
   }
 
   timer() {
@@ -72,7 +75,8 @@ class ClockContainer extends React.Component {
       breakLength: 5,
       timeLeft: 25*60,
       isRunning: false,
-      current: 'session'
+      current: 'session',
+      percentLeft: 100
     });
 
     this.beep.pause();

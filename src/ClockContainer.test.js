@@ -92,6 +92,25 @@ describe('style', () => {
     percentLeft = Math.round(wrapper.state().percentLeft)
     expect(percentLeft).toBe(0);
   });
+
+  it('resets percentHeight to 100 when countdown finishes', () => {
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.instance().beep = { play: () => {}, pause: () => {} };
+    Date.now = jest.fn().mockReturnValueOnce(1527020001000);
+
+    wrapper.setState({ percentLeft : 1 , endTime: 1527020000000 });
+
+    wrapper.instance().countdown();
+    expect(wrapper.state().percentLeft).toBe(100);
+  });
+
+  it('resets percentHeight to 100 when clock reset', () => {
+    const wrapper = shallow(<ClockContainer />);
+    wrapper.instance().beep = { play: () => {}, pause: () => {} };
+    wrapper.setState({ percentLeft : 50 });
+    wrapper.instance().handleReset();
+    expect(wrapper.state().percentLeft).toBe(100);
+  });
 });
 
 describe('change break and session lengths', () => {
